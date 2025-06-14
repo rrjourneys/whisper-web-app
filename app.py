@@ -4,8 +4,10 @@ from faster_whisper import WhisperModel
 from datetime import datetime
 import tempfile
 
+# 加载 Whisper 模型
 model = WhisperModel("base", compute_type="int8")
 
+# 转录函数
 def transcribe(audio):
     segments, _ = model.transcribe(audio, beam_size=5)
     full_text = ""
@@ -17,6 +19,7 @@ def transcribe(audio):
         f.write(full_text)
     return full_text, save_path
 
+# Gradio 界面
 with gr.Blocks() as demo:
     gr.Markdown("## 🎤 BeMyEars Lite (Web Version)")
     audio_input = gr.Audio(source="microphone", type="filepath", label="Speak English or Chinese")
@@ -26,4 +29,5 @@ with gr.Blocks() as demo:
 
     transcribe_btn.click(fn=transcribe, inputs=audio_input, outputs=[output_text, download_file])
 
-demo.launch()
+# 启动 Gradio 服务（确保 Render 可识别）
+demo.launch(server_name="0.0.0.0", server_port=10000)
